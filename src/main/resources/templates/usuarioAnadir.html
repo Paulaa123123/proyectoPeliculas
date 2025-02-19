@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Registro</title>
+	<meta charset="utf-8">
+
+</head>
+
+<body>		
+		<form action="#" th:action="@{/usuario/agregar}" th:object="${usuario}" method="post">
+				<p>Nombre: <input type="text" th:field="*{nombre}"></p>
+				<p>Apellidos: <input type="text" th:field="*{apellidos}"></p>
+				<p>Email: <input type="text" th:field="*{email}"></p>
+				<p>añoNacimiento: <input type="text" th:field="*{anioNacimiento}"></p>
+				<p>Password: <input type="text" th:field="*{password}"></p>
+				<p>telefono: <input type="text" th:field="*{telefono}"></p>
+				<p><input type="submit" value="Guardar"></p>
+			</form>
+</body>
+
+</html>

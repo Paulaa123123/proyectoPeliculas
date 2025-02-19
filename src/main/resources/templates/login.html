@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Log In</title>
+	<meta charset="utf-8">
+
+</head>
+
+<body>		
+		<form action="#" th:action="@{/usuario/login}" th:object="${usuario}" method="post">			
+				<p>Email: <input type="text" th:field="*{email}"></p>
+				<p>Password: <input type="text" th:field="*{password}"></p>
+				<p><input type="submit" value="Iniciar Sesion"></p>
+			</form>
+</body>
+
+</html>
