@@ -2,10 +2,9 @@ package com.paula.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "usuarios")
@@ -20,6 +19,7 @@ public class Usuario {
 	@Id
 	//@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
+	@Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")
 	private String email;
 
 	@Column
