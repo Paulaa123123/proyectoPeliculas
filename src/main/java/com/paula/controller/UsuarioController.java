@@ -32,6 +32,8 @@ public class UsuarioController {
 	@Autowired
 	@Qualifier("usuarioServiceImpl")
 	private UsuarioService usuarioService;
+
+	@Autowired
 	private UsuarioJpaRepository usuarioJpaRepository;
 
 	@GetMapping("/anadir")
@@ -44,38 +46,52 @@ public class UsuarioController {
 	}
 
 	@PostMapping("/agregar")
-	public String addUsuario(@Valid @ModelAttribute("usuario") Usuario usuario, BindingResult bindingResult) {
-		LOG.info("Call: addUsuario() --- Param: " + usuario.toString());
+	public ModelAndView addUsuario(@Valid @ModelAttribute("usuario") Usuario usuario, BindingResult bindingResult) {
+		ModelAndView mav = new ModelAndView(USUARIO_ANADIR_VIEW);
 
-		
+		if (bindingResult.hasErrors()) {
+			if (bindingResult.hasFieldErrors("email")) {
+				mav.addObject("error", "El email no es válido.");
+			} else {
+				mav.addObject("error", "Error en los datos del formulario.");
+			}
+			mav.addObject("bindingResult", bindingResult); 
+			return mav;
+		}
+
+		Usuario usuarioExistente = usuarioJpaRepository.findByEmail(usuario.getEmail());
+		if (usuarioExistente != null) {
+			mav.addObject("error", "El email ya está registrado.");
+			return mav;
+		}
+
 		usuarioService.anadirUsuario(usuario);
 
-		return "redirect:/usuario/login";
+		mav.setViewName("redirect:/usuario/login");
+		return mav;
 	}
-	
-	 @GetMapping("/login")
-	    public ModelAndView loginUsuarioForm() {
-	        ModelAndView mav = new ModelAndView(USUARIO_LOGIN_VIEW);
-	        mav.addObject("usuario", new Usuario()); 
-	        return mav;
-	    }
 
-	    @PostMapping("/login")
-	    public String loginUsuario(@ModelAttribute("usuario") Usuario usuario, BindingResult bindingResult) {
-	        if (bindingResult.hasErrors()) {
-	            return "usuarioLogin"; 
-	        }
+	@GetMapping("/login")
+	public ModelAndView loginUsuarioForm() {
+		ModelAndView mav = new ModelAndView(USUARIO_LOGIN_VIEW);
+		mav.addObject("usuario", new Usuario());
+		return mav;
+	}
 
-	       
-	        Usuario usuarioDb = usuarioService.loginUsuario(usuario);
+	@PostMapping("/login")
+	public String loginUsuario(@ModelAttribute("usuario") Usuario usuario, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "usuarioLogin";
+		}
 
-	        //Hacer validacion de email
-	        if (usuarioDb == null) {
-	            return "redirect:/usuario/login?error=email"; 
-	        }
+		Usuario usuarioDb = usuarioService.loginUsuario(usuario);
 
-	        return "redirect:/usuario/index"; 
-	    }
-		
+		// Hacer validacion de email
+		if (usuarioDb == null) {
+			return "redirect:/usuario/login?error=email";
+		}
+
+		return "redirect:/usuario/index";
+	}
 
 }
