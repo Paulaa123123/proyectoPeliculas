@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,17 +50,19 @@ public class UsuarioController {
 
 		if (bindingResult.hasErrors()) {
 			if (bindingResult.hasFieldErrors("email")) {
-				mav.addObject("error", "El email no es válido.");
+				mav.addObject("emailError", "El email no es válido.");
+			} else if (bindingResult.hasFieldErrors("password")) {
+				mav.addObject("error", "La contraseña no cumple con los requisitos.");
 			} else {
 				mav.addObject("error", "Error en los datos del formulario.");
 			}
-			mav.addObject("bindingResult", bindingResult); 
+			mav.addObject("bindingResult", bindingResult);
 			return mav;
 		}
 
 		Usuario usuarioExistente = usuarioJpaRepository.findByEmail(usuario.getEmail());
 		if (usuarioExistente != null) {
-			mav.addObject("error", "El email ya está registrado.");
+			mav.addObject("emailError", "El email ya está registrado.");
 			return mav;
 		}
 
